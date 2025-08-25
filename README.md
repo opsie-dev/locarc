@@ -1,6 +1,6 @@
 # Loc(al event) arc.
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/locarc)
+![PyPI - Version](https://img.shields.io/pypi/v/locarc)
 
 `locarc` is a tiny tool that aims to emulate an event driven stack locally for
 testing and integration. It was primarily designed to reproduce an
