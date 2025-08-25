@@ -5,6 +5,7 @@ from typing import Self
 
 from pydantic_core import from_json
 
+from locarc.errors import ARC_INSTALL_ERROR
 from locarc.logger import LOGGER
 
 try:
@@ -16,13 +17,14 @@ except ImportError:
         "Missing google extra, please reinstall "
         "using `locarc[google]` dependency."
     )
-    # TODO: exit.
+    raise ARC_INSTALL_ERROR
 
 from locarc.callbacks import EventCallback
 from locarc.events import EventProviderProtocol
 from locarc.events import EventProtocol
 from locarc.models import Subscription
 from locarc.models import Topic
+from locarc.utils import on_exit_signal
 
 
 def _verify_pubsub_emulator_settings() -> None:
@@ -61,7 +63,7 @@ class PubsubEventProvider(EventProviderProtocol):
         cls,
         project_id: str,
         *,
-        credentials: ... | None = None,
+        credentials: Any | None = None,
     ) -> Self:
         _verify_pubsub_emulator_settings()
         publisher = PublisherClient(
@@ -131,6 +133,6 @@ class PubsubEventProvider(EventProviderProtocol):
                 ),
                 callback=callback,
             )
-            # TODO: add SIGTERM to cancel with future.cancel.
+            on_exit_signal(future.cancel)
             futures.append(future)
         return futures

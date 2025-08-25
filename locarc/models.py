@@ -34,6 +34,7 @@ class Subscription(BaseModel):
     id: str
     destinations: SubscriptionDestinations
     provider: EventProvider
+    timeout: float | None = None
     topic: str
 
 
