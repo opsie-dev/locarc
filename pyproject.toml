@@ -1,10 +1,21 @@
 [project]
 name = "locarc"
 version = "0.1.0"
-description = "Add your description here"
+description = "A simple Python tools that aims to emulate EventArc behavior locally"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "google-cloud-pubsub[pubsub]>=2.31.1",
     "httpx>=0.28.1",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "pyyaml>=6.0.2",
     "typer>=0.16.1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.17.1",
+    "pytest>=8.4.1",
+    "ruff>=0.12.10",
 ]
