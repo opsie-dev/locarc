@@ -1,21 +1,22 @@
-from concurrent.futures import Future
 from os import environ
 from typing import Any
 from typing import Self
 
+from pydantic import Field
 from pydantic_core import from_json
+from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
 
 from locarc.errors import ARC_INSTALL_ERROR
 from locarc.logger import LOGGER
 
 try:
-    from google.cloud.pubsub import PublisherClient
+    from google.cloud.pubsub import PublisherClient  # type: ignore[import-untyped]
     from google.cloud.pubsub import SubscriberClient
-    from google.cloud.pubsub_v1.subscriber.message import Message
+    from google.cloud.pubsub_v1.subscriber.message import Message  # type: ignore[import-untyped]
 except ImportError:
     LOGGER.error(
-        "Missing google extra, please reinstall "
-        "using `locarc[google]` dependency."
+        "Missing google extra, please reinstall using `locarc[google]` dependency."
     )
     raise ARC_INSTALL_ERROR
 
@@ -24,12 +25,19 @@ from locarc.events import EventProviderProtocol
 from locarc.events import EventProtocol
 from locarc.models import Subscription
 from locarc.models import Topic
+from locarc.types import AnyFuture
 from locarc.utils import on_exit_signal
 
 
 def _verify_pubsub_emulator_settings() -> None:
     if environ.get("PUBSUB_EMULATOR_HOST") is None:
         LOGGER.warning("`PUBSUB_EMULATOR_HOST` is not set")
+
+
+class PubsubSettings(BaseSettings):
+    model_config = SettingsConfigDict()
+
+    project_id: str = Field(validation_alias="GOOGLE_PROJECT_ID")
 
 
 class PubsubEvent(EventProtocol):
@@ -40,14 +48,13 @@ class PubsubEvent(EventProtocol):
         self._message.ack()
 
     def bytes(self) -> bytes:
-        return self._message.data
+        return self._message.data  # type: ignore[no-any-return]
 
     def json(self) -> Any:
         return from_json(self._message.data)
 
 
 class PubsubEventProvider(EventProviderProtocol):
-
     def __init__(
         self,
         project_id: str,
@@ -63,6 +70,7 @@ class PubsubEventProvider(EventProviderProtocol):
         cls,
         project_id: str,
         *,
+        # TODO: infer from environ ? (e.g GOOGLE_APPLICATION_CREDENTIALS)
         credentials: Any | None = None,
     ) -> Self:
         _verify_pubsub_emulator_settings()
@@ -70,10 +78,7 @@ class PubsubEventProvider(EventProviderProtocol):
             credentials=credentials,
             project_id=project_id,
         )
-        subscriber = SubscriberClient(
-            credentials=credentials,
-            project_id=project_id
-        )
+        subscriber = SubscriberClient(credentials=credentials, project_id=project_id)
         return cls(project_id, publisher, subscriber)
 
     def create_subscription(
@@ -123,8 +128,8 @@ class PubsubEventProvider(EventProviderProtocol):
         self,
         subscription: Subscription,
         callbacks: list[EventCallback],
-    ) -> list[Future]:
-        futures: list[Future] = []
+    ) -> list[AnyFuture]:
+        futures: list[AnyFuture] = []
         for callback in callbacks:
             future = self._subscriber.subscribe(
                 self._subscriber.subscription_path(

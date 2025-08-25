@@ -43,18 +43,18 @@ class Arc(BaseModel):
     subscriptions: list[Subscription] | None = None
     topics: list[Topic]
 
-    def get_service_by_id(self, service_id: str) -> Service | None:
+    def get_service_by_id(self, service_id: str) -> Service:
         if self.services is None:
-            return None
+            raise KeyError(f"No service are declared in arc file.")
         for service in self.services:
             if service.id == service_id:
                 return service
-        return None
+        raise KeyError(f"Service `{service_id} is not declared in arc file.")
 
-    def get_topic_by_id(self, topic_id: str) -> Topic | None:
+    def get_topic_by_id(self, topic_id: str) -> Topic:
         if self.topics is None:
-            return None
+            raise KeyError(f"No topic are declared in arc file.")
         for topic in self.topics:
             if topic.id == topic_id:
                 return topic
-        return None
+        raise KeyError(f"Topic `{topic_id} is not declared in arc file.")

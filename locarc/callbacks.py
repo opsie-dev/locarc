@@ -11,7 +11,7 @@ EventCallback = Callable[[EventProtocol], None]
 
 
 def ServiceCallback(service: Service) -> EventCallback:
-    client = Client(base_url=service.url)
+    client = Client(base_url=str(service.url))
 
     def _callback(event: EventProtocol) -> None:
         response = client.request(
@@ -21,7 +21,7 @@ def ServiceCallback(service: Service) -> EventCallback:
         )
         response.raise_for_status()
         event.ack()
-    
+
     return _callback
 
 

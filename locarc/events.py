@@ -5,6 +5,7 @@ from typing import Protocol
 from locarc.callbacks import EventCallback
 from locarc.models import Subscription
 from locarc.models import Topic
+from locarc.types import AnyFuture
 
 
 class EventProtocol(Protocol):
@@ -42,5 +43,5 @@ class EventProviderProtocol(Protocol):
         self,
         subscription: Subscription,
         callbacks: list[EventCallback],
-    ) -> list[Future]:
+    ) -> list[AnyFuture]:
         pass
