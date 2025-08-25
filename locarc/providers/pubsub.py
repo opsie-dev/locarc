@@ -1,3 +1,4 @@
+from enum import StrEnum
 from os import environ
 from typing import Any
 from typing import Self
@@ -20,7 +21,7 @@ except ImportError:
     )
     raise ARC_INSTALL_ERROR
 
-from locarc.callbacks import EventCallback
+from locarc.events import EventCallback
 from locarc.events import EventProviderProtocol
 from locarc.events import EventProtocol
 from locarc.models import Subscription
@@ -34,10 +35,16 @@ def _verify_pubsub_emulator_settings() -> None:
         LOGGER.warning("`PUBSUB_EMULATOR_HOST` is not set")
 
 
+class PubsubCredentials(StrEnum):
+    ANONYMOUS = "anonymous"
+    INFERED = "infered"
+
+
 class PubsubSettings(BaseSettings):
     model_config = SettingsConfigDict()
 
     project_id: str = Field(validation_alias="GOOGLE_PROJECT_ID")
+    credentials: PubsubCredentials = Field(validation_alias="GOOGLE_PUBSUB_CREDENTIALS")
 
 
 class PubsubEvent(EventProtocol):
@@ -74,11 +81,8 @@ class PubsubEventProvider(EventProviderProtocol):
         credentials: Any | None = None,
     ) -> Self:
         _verify_pubsub_emulator_settings()
-        publisher = PublisherClient(
-            credentials=credentials,
-            project_id=project_id,
-        )
-        subscriber = SubscriberClient(credentials=credentials, project_id=project_id)
+        publisher = PublisherClient(credentials=credentials)
+        subscriber = SubscriberClient(credentials=credentials)
         return cls(project_id, publisher, subscriber)
 
     def create_subscription(

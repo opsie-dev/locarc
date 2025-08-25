@@ -13,9 +13,9 @@ try:
 except ImportError:
     from yaml import Loader
 
-from locarc.callbacks import EventCallback
 from locarc.callbacks import ServiceCallback
 from locarc.callbacks import TopicCallback
+from locarc.events import EventCallback
 from locarc.errors import ARC_ERROR
 from locarc.errors import ARC_INVALID_YAML_ERROR
 from locarc.errors import ARC_VALIDATION_ERROR

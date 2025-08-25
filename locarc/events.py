@@ -1,8 +1,7 @@
-from concurrent.futures import Future
 from typing import Any
+from typing import Callable
 from typing import Protocol
 
-from locarc.callbacks import EventCallback
 from locarc.models import Subscription
 from locarc.models import Topic
 from locarc.types import AnyFuture
@@ -17,6 +16,9 @@ class EventProtocol(Protocol):
 
     def json(self) -> Any:
         pass
+
+
+EventCallback = Callable[[EventProtocol], None]
 
 
 class EventProviderProtocol(Protocol):

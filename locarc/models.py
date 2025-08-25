@@ -1,23 +1,25 @@
 from enum import StrEnum
 
-from pydantic import BaseModel
 from pydantic import HttpUrl
 
+from locarc.types import FrozenBaseModel
 
-class EventProvider(StrEnum):
+
+class EventProviders(StrEnum):
+    IN_MEMORY = "in_memory"
     PUBSUB = "pubsub"
 
 
-class Topic(BaseModel):
+class Topic(FrozenBaseModel):
     id: str
-    provider: EventProvider
+    provider: EventProviders
 
 
 class ServiceMethod(StrEnum):
     POST = "POST"
 
 
-class Service(BaseModel):
+class Service(FrozenBaseModel):
     id: str
     url: HttpUrl
 
@@ -25,27 +27,27 @@ class Service(BaseModel):
     path: str = "/"
 
 
-class SubscriptionDestinations(BaseModel):
-    services: list[str] | None = None
-    topics: list[str] | None = None
+class SubscriptionDestinations(FrozenBaseModel):
+    services: frozenset[str] | None = None
+    topics: frozenset[str] | None = None
 
 
-class Subscription(BaseModel):
+class Subscription(FrozenBaseModel):
     id: str
     destinations: SubscriptionDestinations
-    provider: EventProvider
+    provider: EventProviders
     timeout: float | None = None
     topic: str
 
 
-class Arc(BaseModel):
-    services: list[Service] | None = None
-    subscriptions: list[Subscription] | None = None
-    topics: list[Topic]
+class Arc(FrozenBaseModel):
+    services: frozenset[Service] | None = None
+    subscriptions: frozenset[Subscription] | None = None
+    topics: frozenset[Topic]
 
     def get_service_by_id(self, service_id: str) -> Service:
         if self.services is None:
-            raise KeyError(f"No service are declared in arc file.")
+            raise KeyError("No service are declared in arc file.")
         for service in self.services:
             if service.id == service_id:
                 return service
@@ -53,7 +55,7 @@ class Arc(BaseModel):
 
     def get_topic_by_id(self, topic_id: str) -> Topic:
         if self.topics is None:
-            raise KeyError(f"No topic are declared in arc file.")
+            raise KeyError("No topic are declared in arc file.")
         for topic in self.topics:
             if topic.id == topic_id:
                 return topic
