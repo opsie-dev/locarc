@@ -20,7 +20,7 @@ def create_pubsub_provider() -> EventProviderProtocol:
     credentials: AnonymousCredentials | None
     match settings.credentials:
         case PubsubCredentials.ANONYMOUS:
-            credentials = AnonymousCredentials()  # type: ignore[no-untyped-call]
+            credentials = AnonymousCredentials()
         case _:
             credentials = None
     return PubsubEventProvider.create(
