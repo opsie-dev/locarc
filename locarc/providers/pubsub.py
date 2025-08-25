@@ -12,9 +12,9 @@ from locarc.errors import ARC_INSTALL_ERROR
 from locarc.logger import LOGGER
 
 try:
-    from google.cloud.pubsub import PublisherClient  # type: ignore[import-untyped]
+    from google.cloud.pubsub import PublisherClient
     from google.cloud.pubsub import SubscriberClient
-    from google.cloud.pubsub_v1.subscriber.message import Message  # type: ignore[import-untyped]
+    from google.cloud.pubsub_v1.subscriber.message import Message
 except ImportError:
     LOGGER.error(
         "Missing google extra, please reinstall using `locarc[google]` dependency."
