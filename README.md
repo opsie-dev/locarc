@@ -1,6 +1,7 @@
 # Loc(al event) arc.
 
 [![PyPI - Version](https://img.shields.io/pypi/v/locarc)](https://pypi.org/project/locarc/)
+[![Docker Image Version](https://img.shields.io/docker/v/opsiedev/locarc?label=dockerhub&color=blue)](https://hub.docker.com/repository/docker/opsiedev/locarc)
 
 `locarc` is a tiny tool that aims to emulate an event driven stack locally for
 testing and integration. It was primarily designed to reproduce an
