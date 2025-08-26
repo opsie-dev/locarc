@@ -3,7 +3,6 @@ from pathlib import Path
 from typing_extensions import Annotated
 
 from pydantic import ValidationError
-from typer import Option
 from typer import run
 from yaml import YAMLError  # type: ignore[import-untyped]
 from yaml import load as load_yaml
@@ -15,6 +14,9 @@ except ImportError:
 
 from locarc.callbacks import ServiceCallback
 from locarc.callbacks import TopicCallback
+from locarc.constants import DEFAULT_ARC_FILE
+from locarc.constants import OPTION_ARC_FILE
+from locarc.constants import OPTION_DEFAULT_TIMEOUT
 from locarc.events import EventCallback
 from locarc.errors import ARC_ERROR
 from locarc.errors import ARC_INVALID_YAML_ERROR
@@ -112,23 +114,9 @@ def wait_for_the_future_to_be_better(
 
 
 def entrypoint(
-    arcfile: Annotated[
-        Path,
-        Option(
-            default="locarc.yaml",
-            dir_okay=False,
-            envvar="LOCARC_FILE",
-            exists=True,
-            file_okay=True,
-            help="Path to locarc spec file to run event stack from",
-            resolve_path=True,
-        ),
-    ],
-    default_timeout: float | None = Option(
-        default=None,
-        envvar="LOCARC_DEFAULT_SUBSCRIPTION_TIMEOUT",
-        help="The default timeout to use for waiting subscription to end",
-    ),
+    *,
+    arcfile: Annotated[Path, OPTION_ARC_FILE] = DEFAULT_ARC_FILE,
+    default_timeout: Annotated[float | None, OPTION_DEFAULT_TIMEOUT] = None,
 ) -> None:
     arc = safe_load_arc_file(arcfile)
     create_arc_topics(arc)
@@ -136,5 +124,9 @@ def entrypoint(
     wait_for_the_future_to_be_better(futures, default_timeout)
 
 
-if __name__ == "__main__":
+def main() -> None:
     run(entrypoint)
+
+
+if __name__ == "__main__":
+    main()

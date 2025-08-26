@@ -1,14 +1,14 @@
 from pathlib import Path
 
 from locarc.providers.inmemory import InMemoryEventProvider
+from locarc.models import Arc
+from locarc.models import Subscription
+from locarc.models import Topic
 from locarc.main import create_arc_topics
 from locarc.main import create_arc_subscription
 from locarc.main import parse_event_subscription_callback
 from locarc.main import safe_load_arc_file
 from locarc.main import wait_for_the_future_to_be_better
-from locarc.models import Arc
-from locarc.models import Subscription
-from locarc.models import Topic
 
 
 def test_create_arc_topics(

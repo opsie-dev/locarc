@@ -1,6 +1,10 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "locarc"
-version = "0.1.0"
+version = "0.2.0-rc1"
 description = "A simple Python tools that aims to emulate EventArc behavior locally"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -17,6 +21,9 @@ pubsub = [
     "google-cloud-pubsub>=2.31.1",
 ]
 
+[project.scripts]
+locarc = "locarc.main:main"
+
 [dependency-groups]
 dev = [
     "mypy>=1.17.1",
@@ -25,6 +32,9 @@ dev = [
     "pytest-mock>=3.14.1",
     "ruff>=0.12.10",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["locarc"]
 
 [tool.mypy]
 ignore_missing_imports = true

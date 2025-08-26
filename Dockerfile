@@ -1,6 +1,4 @@
-FROM python:3.13
+FROM python:3.13.7-slim-trixie
 
-WORKDIR /locarc
-
-COPY pyproject.toml .
-COPY uv.lock .
+RUN pip install locarc
+ENTRYPOINT ["locarc"]
