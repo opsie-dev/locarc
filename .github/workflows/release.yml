@@ -8,6 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+    - run: pip install uv
     - id: readVersion
       run: echo "value=$(uv version --short)" >> "$GITHUB_OUTPUT"
     - run: git config --global user.name 'OPSIE.DEV'
